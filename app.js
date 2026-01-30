@@ -92,8 +92,8 @@ const showGameOver = () => {
 const getSharePayload = () => {
   const link = "https://kupkoXD.github.io/ideathon2026_sun-swipe/";
   const earned = formatVacation(state.elapsed);
-  const text = `I earned ${earned} vacation time in Sunset Swipe. Join the IG Metall affiliate program to play and beat my score: ${link}`;
-  return { link, text };
+  const text = `I earned ${earned} vacation time in Sunset Swipe. Try beating my score!:`;
+  return { link, text};
 };
 
 const openShareSheet = () => {
