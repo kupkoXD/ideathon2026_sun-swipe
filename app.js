@@ -65,6 +65,8 @@ const updateHud = () => {
   scoreEl.textContent = formatVacation(state.elapsed);
 };
 
+
+
 const resetGame = () => {
   state.elapsed = 0;
   state.score = 0;
