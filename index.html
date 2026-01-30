@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Sunset Swipe</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="portrait" role="application" aria-label="Sunset Swipe">
+      <main class="sky" id="sky" aria-live="polite">
+        <div class="hud" aria-hidden="true">
+          <div class="hud__item">
+            <span class="hud__label">Time</span>
+            <span id="time" class="hud__value">0.0s</span>
+          </div>
+          <div class="hud__item">
+            <span class="hud__label">Vacation</span>
+            <span id="score" class="hud__value">0h</span>
+          </div>
+        </div>
+        <div class="sun" id="sun" aria-hidden="true"></div>
+        <div class="cloud cloud--a" aria-hidden="true"></div>
+        <div class="cloud cloud--b" aria-hidden="true"></div>
+        <div class="hint" id="hint">Swipe up fast to keep the sun up</div>
+      </main>
+
+      <img class="beach" src="beach.png" alt="Sunlit beach" />
+
+      <div class="modal" id="gameOver" role="dialog" aria-modal="true" aria-labelledby="gameOverTitle" aria-hidden="true">
+        <div class="modal__card">
+          <h2 id="gameOverTitle" class="modal__title">Sunset!</h2>
+          <p class="modal__text">Time: <span id="finalTime">0.0s</span></p>
+          <p class="modal__text">Vacation earned: <span id="finalScore">0h</span></p>
+          <div class="modal__actions">
+            <button id="restart" class="modal__btn">Restart</button>
+            <button id="invite" class="modal__btn modal__btn--ghost">Invite friends</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
