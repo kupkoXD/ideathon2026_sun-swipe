@@ -147,8 +147,11 @@ const onPointerMove = (event) => {
 
   if (deltaY < 0) {
     const speed = Math.abs(deltaY) / dt;
-    const threshold = 0.35 + state.elapsed / 12000 * 0.35;
-    const effort = clamp(speed / threshold, 0.15, 1);
+    const threshold = 0.5 + state.elapsed / 12000 * 0.4;
+    if (speed < threshold) {
+      return;
+    }
+    const effort = clamp(speed / threshold, 0, 1);
     const liftBase = 0.9 / (1 + state.elapsed / 9000);
     const lift = liftBase * effort;
     state.sunY += deltaY * lift;
