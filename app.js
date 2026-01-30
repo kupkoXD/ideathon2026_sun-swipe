@@ -50,8 +50,8 @@ const strings = {
     labelVacation: "Vacation",
     labelFinalTime: "Time",
     labelFinalScore: "Vacation earned",
-    campaignLine1: "<strong>Need vacation for real?</strong>",
-    campaignLine2: "See how <strong>IG Metall</strong> is fighting for you when you finish the game.",
+    campaignLine1: "<strong>Brauchst du echten Urlaub?</strong>",
+    campaignLine2: "Sieh, wie <strong>IG Metall</strong> für dich kämpft, wenn das Spiel endet.",
     shareUnavailable: "Share not available",
     shareCopied: "Invite link copied!",
     shareText: (earned, link) =>
@@ -78,6 +78,10 @@ const strings = {
     units: { day: "T", hour: "Std" },
   },
 };
+
+
+//campaignLine1: "<strong>Need vacation for real?</strong>",
+//campaignLine2: "See how <strong>IG Metall</strong> is fighting for you when you finish the game.",
 
 const t = strings[locale];
 
