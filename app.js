@@ -40,23 +40,23 @@ const locale = isGerman ? "de" : "en";
 
 const strings = {
   en: {
-    hint: "Swipe up fast to keep the sun up",
-    gameOverTitle: "Sunset!",
-    gameOverHint: "Sunset! Swipe up to restart",
-    restart: "Restart",
-    invite: "Invite friends",
-    learnMore: "Learn more",
-    labelTime: "Time",
-    labelVacation: "Vacation",
-    labelFinalTime: "Time",
-    labelFinalScore: "Vacation earned",
+    hint: "Wische schnell nach oben, um die Sonne oben zu halten",
+    gameOverTitle: "Sonnenuntergang!",
+    gameOverHint: "Sonnenuntergang! Wische nach oben, um neu zu starten",
+    restart: "Neu starten",
+    invite: "Freunde einladen",
+    learnMore: "Mehr erfahren",
+    labelTime: "Zeit",
+    labelVacation: "Urlaub",
+    labelFinalTime: "Zeit",
+    labelFinalScore: "Urlaub gesammelt",
     campaignLine1: "<strong>Brauchst du echten Urlaub?</strong>",
     campaignLine2: "Sieh, wie <strong>IG Metall</strong> für dich kämpft, wenn das Spiel endet.",
-    shareUnavailable: "Share not available",
-    shareCopied: "Invite link copied!",
+    shareUnavailable: "Teilen nicht verfügbar",
+    shareCopied: "Einladungslink kopiert!",
     shareText: (earned, link) =>
-      `I earned ${earned} vacation time in Sunset Swipe. Try beating my score: ${link}`,
-    units: { day: "d", hour: "h" },
+      `Ich habe ${earned} Urlaub in Sunset Swipe gesammelt. Schaffst du mehr? ${link}`,
+    units: { day: "T", hour: "Std" },
   },
   de: {
     hint: "Wische schnell nach oben, um die Sonne oben zu halten",
@@ -82,6 +82,25 @@ const strings = {
 
 //campaignLine1: "<strong>Need vacation for real?</strong>",
 //campaignLine2: "See how <strong>IG Metall</strong> is fighting for you when you finish the game.",
+/*
+en: {
+    hint: "Swipe up fast to keep the sun up",
+    gameOverTitle: "Sunset!",
+    gameOverHint: "Sunset! Swipe up to restart",
+    restart: "Restart",
+    invite: "Invite friends",
+    learnMore: "Learn more",
+    labelTime: "Time",
+    labelVacation: "Vacation",
+    labelFinalTime: "Time",
+    labelFinalScore: "Vacation earned",
+    campaignLine1: "<strong>Brauchst du echten Urlaub?</strong>",
+    campaignLine2: "Sieh, wie <strong>IG Metall</strong> für dich kämpft, wenn das Spiel endet.",
+    shareUnavailable: "Share not available",
+    shareCopied: "Invite link copied!",
+    shareText: (earned, link) =>
+      `I earned ${earned} vacation time in Sunset Swipe. Try beating my score: ${link}`,
+    units: { day: "d", hour: "h" },*/
 
 const t = strings[locale];
 
