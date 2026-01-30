@@ -9,6 +9,9 @@ const finalTimeEl = document.getElementById("finalTime");
 const finalScoreEl = document.getElementById("finalScore");
 const restartBtn = document.getElementById("restart");
 const inviteBtn = document.getElementById("invite");
+const shareSheet = document.getElementById("shareSheet");
+const shareClose = document.getElementById("shareClose");
+const shareButtons = shareSheet.querySelectorAll("[data-share]");
 
 const state = {
   sunY: 0,
@@ -82,6 +85,23 @@ const showGameOver = () => {
   finalScoreEl.textContent = formatVacation(state.elapsed);
   gameOverEl.classList.add("modal--open");
   gameOverEl.setAttribute("aria-hidden", "false");
+};
+
+const getSharePayload = () => {
+  const link = "https://kupkoXD.github.io/ideathon2026_sun-swipe/";
+  const earned = formatVacation(state.elapsed);
+  const text = `I earned ${earned} vacation time in Sunset Swipe. Join the IG Metall affiliate program to play and beat my score: ${link}`;
+  return { link, text };
+};
+
+const openShareSheet = () => {
+  shareSheet.classList.add("share-sheet--open");
+  shareSheet.setAttribute("aria-hidden", "false");
+};
+
+const closeShareSheet = () => {
+  shareSheet.classList.remove("share-sheet--open");
+  shareSheet.setAttribute("aria-hidden", "true");
 };
 
 const tick = (time) => {
@@ -181,27 +201,58 @@ restartBtn.addEventListener("click", () => {
 });
 
 inviteBtn.addEventListener("click", async () => {
-  const link = "https://kupkoXD.github.io/ideathon2026_sun-swipe/";
-  const earned = formatVacation(state.elapsed);
-  const text = `I earned ${earned} vacation time in Sunset Swipe. Join the IG Metall affiliate program to play and beat my score: ${link}`;
+  const { link, text } = getSharePayload();
   if (navigator.share) {
-    navigator
-      .share({ title: "Sunset Swipe", text, url: link })
-      .catch(() => {
-        inviteBtn.textContent = "Share not available";
+    try {
+      await navigator.share({ title: "Sunset Swipe", text, url: link });
+      return;
+    } catch {
+      // continue to custom share sheet
+    }
+  }
+  openShareSheet();
+});
+
+shareClose.addEventListener("click", closeShareSheet);
+shareSheet.addEventListener("click", (event) => {
+  if (event.target === shareSheet) {
+    closeShareSheet();
+  }
+});
+
+shareButtons.forEach((button) => {
+  button.addEventListener("click", async () => {
+    const type = button.dataset.share;
+    const { link, text } = getSharePayload();
+    const encodedText = encodeURIComponent(text);
+    const encodedLink = encodeURIComponent(link);
+    let targetUrl = "";
+
+    if (type === "whatsapp") {
+      targetUrl = `https://wa.me/?text=${encodedText}`;
+    } else if (type === "telegram") {
+      targetUrl = `https://t.me/share/url?url=${encodedLink}&text=${encodedText}`;
+    } else if (type === "email") {
+      targetUrl = `mailto:?subject=${encodeURIComponent("Sunset Swipe")}&body=${encodedText}`;
+    } else if (type === "facebook") {
+      targetUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodedLink}`;
+    } else if (type === "x") {
+      targetUrl = `https://twitter.com/intent/tweet?text=${encodedText}`;
+    } else if (type === "copy") {
+      try {
+        await navigator.clipboard.writeText(text);
+        button.textContent = "Copied!";
         window.setTimeout(() => {
-          inviteBtn.textContent = "Invite friends";
-        }, 1600);
-      });
-    return;
-  }
-  try {
-    await navigator.clipboard.writeText(text);
-    inviteBtn.textContent = "Invite link copied!";
-    window.setTimeout(() => {
-      inviteBtn.textContent = "Invite friends";
-    }, 1600);
-  } catch {
-    inviteBtn.textContent = text;
-  }
+          button.textContent = "Copy link";
+        }, 1200);
+      } catch {
+        button.textContent = "Copy failed";
+      }
+      return;
+    }
+
+    if (targetUrl) {
+      window.open(targetUrl, "_blank", "noopener,noreferrer");
+    }
+  });
 });
