@@ -7,11 +7,26 @@ const scoreEl = document.getElementById("score");
 const gameOverEl = document.getElementById("gameOver");
 const finalTimeEl = document.getElementById("finalTime");
 const finalScoreEl = document.getElementById("finalScore");
+const gameOverTitle = document.getElementById("gameOverTitle");
 const restartBtn = document.getElementById("restart");
 const inviteBtn = document.getElementById("invite");
+const learnMoreBtn = document.getElementById("learnMore");
 const shareSheet = document.getElementById("shareSheet");
 const shareClose = document.getElementById("shareClose");
 const shareButtons = shareSheet.querySelectorAll("[data-share]");
+const labelTime = document.getElementById("labelTime");
+const labelVacation = document.getElementById("labelVacation");
+const labelFinalTime = document.getElementById("labelFinalTime");
+const labelFinalScore = document.getElementById("labelFinalScore");
+const campaignLine1 = document.getElementById("campaignLine1");
+const campaignLine2 = document.getElementById("campaignLine2");
+const shareTitle = document.getElementById("shareTitle");
+const shareWhatsApp = document.getElementById("shareWhatsApp");
+const shareTelegram = document.getElementById("shareTelegram");
+const shareEmail = document.getElementById("shareEmail");
+const shareFacebook = document.getElementById("shareFacebook");
+const shareX = document.getElementById("shareX");
+const shareCopy = document.getElementById("shareCopy");
 
 const state = {
   sunY: 0,
@@ -29,6 +44,54 @@ const state = {
 };
 
 const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+const isGerman = (navigator.language || "").toLowerCase().startsWith("de");
+const locale = isGerman ? "de" : "en";
+
+const strings = {
+  en: {
+    hint: "Swipe up fast to keep the sun up",
+    gameOverTitle: "Sunset!",
+    gameOverHint: "Sunset! Swipe up to restart",
+    restart: "Restart",
+    invite: "Invite friends",
+    learnMore: "Learn more",
+    labelTime: "Time",
+    labelVacation: "Vacation",
+    labelFinalTime: "Time",
+    labelFinalScore: "Vacation earned",
+    campaignLine1: "Need vacation for real?",
+    campaignLine2: "See how IG Metall is fighting for you when you finish the game.",
+    shareTitle: "Share with",
+    shareEmail: "Email",
+    shareCopy: "Copy link",
+    shareText: (earned, link) =>
+      `I earned ${earned} vacation time in Sunset Swipe. Try beating my score: ${link}`,
+    units: { day: "d", hour: "h" },
+  },
+  de: {
+    hint: "Wische schnell nach oben, um die Sonne oben zu halten",
+    gameOverTitle: "Sonnenuntergang!",
+    gameOverHint: "Sonnenuntergang! Wische nach oben, um neu zu starten",
+    restart: "Neu starten",
+    invite: "Freunde einladen",
+    learnMore: "Mehr erfahren",
+    labelTime: "Zeit",
+    labelVacation: "Urlaub",
+    labelFinalTime: "Zeit",
+    labelFinalScore: "Urlaub gesammelt",
+    campaignLine1: "Brauchst du echten Urlaub?",
+    campaignLine2: "Sieh, wie IG Metall für dich kämpft, wenn das Spiel endet.",
+    shareTitle: "Teilen mit",
+    shareEmail: "E-Mail",
+    shareCopy: "Link kopieren",
+    shareText: (earned, link) =>
+      `Ich habe ${earned} Urlaub in Sunset Swipe gesammelt. Schaffst du mehr? ${link}`,
+    units: { day: "T", hour: "Std" },
+  },
+};
+
+const t = strings[locale];
 
 const updateSkyGradient = (progress) => {
   const topLight = 64 - 22 * progress;
@@ -54,9 +117,9 @@ const formatVacation = (elapsedMs) => {
   const days = Math.floor(hoursTotal / 8);
   const hours = hoursTotal % 8;
   if (days > 0) {
-    return `${days}d ${hours}h`;
+    return `${days}${t.units.day} ${hours}${t.units.hour}`;
   }
-  return `${hours}h`;
+  return `${hours}${t.units.hour}`;
 };
 
 const updateHud = () => {
@@ -76,7 +139,7 @@ const resetGame = () => {
   state.running = true;
   centerSun();
   hint.style.opacity = "1";
-  hint.textContent = "Swipe up fast to keep the sun up";
+  hint.textContent = t.hint;
   gameOverEl.classList.remove("modal--open");
   gameOverEl.setAttribute("aria-hidden", "true");
   updateHud();
@@ -92,8 +155,8 @@ const showGameOver = () => {
 const getSharePayload = () => {
   const link = "https://kupkoXD.github.io/ideathon2026_sun-swipe/";
   const earned = formatVacation(state.elapsed);
-  const text = `I earned ${earned} vacation time in Sunset Swipe. Try beating my score!:`;
-  return { link, text};
+  const text = t.shareText(earned, link);
+  return { link, text };
 };
 
 const openShareSheet = () => {
@@ -130,7 +193,7 @@ const tick = (time) => {
       state.running = false;
       state.gameOver = true;
       hint.style.opacity = "1";
-      hint.textContent = "Sunset! Swipe up to restart";
+      hint.textContent = t.gameOverHint;
       showGameOver();
     }
   }
@@ -202,6 +265,10 @@ restartBtn.addEventListener("click", () => {
   resetGame();
 });
 
+learnMoreBtn.addEventListener("click", () => {
+  window.open("https://www.igmetall.de", "_blank", "noopener,noreferrer");
+});
+
 inviteBtn.addEventListener("click", async () => {
   const { link, text } = getSharePayload();
   if (navigator.share) {
@@ -243,12 +310,12 @@ shareButtons.forEach((button) => {
     } else if (type === "copy") {
       try {
         await navigator.clipboard.writeText(text);
-        button.textContent = "Copied!";
+        button.textContent = locale === "de" ? "Kopiert!" : "Copied!";
         window.setTimeout(() => {
-          button.textContent = "Copy link";
+          button.textContent = t.shareCopy;
         }, 1200);
       } catch {
-        button.textContent = "Copy failed";
+        button.textContent = locale === "de" ? "Kopieren fehlgeschlagen" : "Copy failed";
       }
       return;
     }
@@ -258,3 +325,26 @@ shareButtons.forEach((button) => {
     }
   });
 });
+
+const applyLocalization = () => {
+  labelTime.textContent = t.labelTime;
+  labelVacation.textContent = t.labelVacation;
+  labelFinalTime.textContent = t.labelFinalTime;
+  labelFinalScore.textContent = t.labelFinalScore;
+  campaignLine1.textContent = t.campaignLine1;
+  campaignLine2.textContent = t.campaignLine2;
+  shareTitle.textContent = t.shareTitle;
+  shareEmail.textContent = t.shareEmail;
+  shareCopy.textContent = t.shareCopy;
+  gameOverTitle.textContent = t.gameOverTitle;
+  restartBtn.textContent = t.restart;
+  inviteBtn.textContent = t.invite;
+  learnMoreBtn.textContent = t.learnMore;
+  shareWhatsApp.textContent = "WhatsApp";
+  shareTelegram.textContent = "Telegram";
+  shareFacebook.textContent = "Facebook";
+  shareX.textContent = "X (Twitter)";
+  hint.textContent = t.hint;
+};
+
+applyLocalization();
