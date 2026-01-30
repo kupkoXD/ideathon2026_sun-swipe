@@ -1,5 +1,5 @@
 :root {
-  color-scheme: light;
+  color-scheme: only light;
   --bg: #0c1023;
   --sea: #14284f;
   --accent: #ffb347;
@@ -18,9 +18,17 @@
   font-family: "Segoe UI", system-ui, sans-serif;
 }
 
+html,
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  color-scheme: only light;
+  -webkit-filter: none;
+  filter: none;
+}
+
 body {
   background: radial-gradient(circle at top, #1e2b61 0%, var(--bg) 60%);
-  color: var(--text);
   min-height: 100vh;
   display: flex;
   align-items: stretch;
@@ -39,6 +47,7 @@ body {
   touch-action: none;
   user-select: none;
   forced-color-adjust: none;
+  background-color: var(--sea);
 }
 
 .sky {
@@ -101,6 +110,30 @@ body {
   transition: transform 0.05s linear;
   pointer-events: none;
   forced-color-adjust: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: only light;
+  }
+
+  html,
+  body {
+    background-color: var(--bg);
+    color: var(--text);
+  }
+
+  .portrait {
+    background-color: var(--sea);
+  }
+
+  .sky {
+    background: linear-gradient(180deg, var(--sky-top) 0%, var(--sky-mid) 55%, var(--sky-bottom) 100%);
+  }
+
+  .sun {
+    background-color: #ffb347;
+  }
 }
 
 .cloud {
