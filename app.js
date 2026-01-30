@@ -149,6 +149,8 @@ const onPointerMove = (event) => {
     const speed = Math.abs(deltaY) / dt;
     const threshold = 0.5 + state.elapsed / 12000 * 0.4;
     if (speed < threshold) {
+      const penalty = (1 - speed / threshold) * (2 + state.elapsed / 12000);
+      state.velocity += penalty * 0.35;
       return;
     }
     const effort = clamp(speed / threshold, 0, 1);
@@ -179,9 +181,17 @@ restartBtn.addEventListener("click", () => {
 });
 
 inviteBtn.addEventListener("click", async () => {
-  const link = "https://example.com/ig-metall/affiliate?ref=YOURCODE";
+  const link = "https://kupkoXD.github.io/ideathon2026_sun-swipe";
   const earned = formatVacation(state.elapsed);
   const text = `I earned ${earned} vacation time in Sunset Swipe. Join the IG Metall affiliate program to play and beat my score: ${link}`;
+  if (navigator.share) {
+    try {
+      await navigator.share({ text, url: link, title: "Sunset Swipe" });
+      return;
+    } catch {
+      // fall back to clipboard
+    }
+  }
   try {
     await navigator.clipboard.writeText(text);
     inviteBtn.textContent = "Invite link copied!";
