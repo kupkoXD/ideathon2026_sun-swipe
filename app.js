@@ -181,16 +181,19 @@ restartBtn.addEventListener("click", () => {
 });
 
 inviteBtn.addEventListener("click", async () => {
-  const link = "https://kupkoXD.github.io/ideathon2026_sun-swipe";
+  const link = "https://kupkoXD.github.io/ideathon2026_sun-swipe/";
   const earned = formatVacation(state.elapsed);
   const text = `I earned ${earned} vacation time in Sunset Swipe. Join the IG Metall affiliate program to play and beat my score: ${link}`;
   if (navigator.share) {
-    try {
-      await navigator.share({ text, url: link, title: "Sunset Swipe" });
-      return;
-    } catch {
-      // fall back to clipboard
-    }
+    navigator
+      .share({ title: "Sunset Swipe", text, url: link })
+      .catch(() => {
+        inviteBtn.textContent = "Share not available";
+        window.setTimeout(() => {
+          inviteBtn.textContent = "Invite friends";
+        }, 1600);
+      });
+    return;
   }
   try {
     await navigator.clipboard.writeText(text);
