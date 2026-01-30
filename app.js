@@ -91,8 +91,8 @@ const tick = (time) => {
   }
 
   if (state.running) {
-    const difficulty = 1 + state.elapsed / 24000;
-    const fallSpeed = 0.018 * dt * difficulty;
+    const difficulty = 1 + state.elapsed / 15000;
+    const fallSpeed = 0.022 * dt * difficulty;
     state.velocity += fallSpeed;
     state.sunY += state.velocity * 0.5;
     state.vacationHours = Math.floor(state.elapsed / 2000);
