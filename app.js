@@ -16,6 +16,7 @@ const state = {
   lastTime: 0,
   pointerDown: false,
   lastPointerY: 0,
+  lastPointerTime: 0,
   hideHintTimer: null,
   elapsed: 0,
   running: false,
@@ -131,6 +132,7 @@ const onPointerDown = (event) => {
   }
   state.pointerDown = true;
   state.lastPointerY = event.clientY;
+  state.lastPointerTime = performance.now();
   hideHintSoon();
 };
 
@@ -138,10 +140,17 @@ const onPointerMove = (event) => {
   if (!state.pointerDown) return;
   const currentY = event.clientY;
   const deltaY = currentY - state.lastPointerY;
+  const now = performance.now();
+  const dt = Math.max(1, now - state.lastPointerTime);
   state.lastPointerY = currentY;
+  state.lastPointerTime = now;
 
   if (deltaY < 0) {
-    const lift = 0.85 / (1 + state.elapsed / 26000);
+    const speed = Math.abs(deltaY) / dt;
+    const threshold = 0.35 + state.elapsed / 12000 * 0.35;
+    const effort = clamp(speed / threshold, 0.15, 1);
+    const liftBase = 0.9 / (1 + state.elapsed / 9000);
+    const lift = liftBase * effort;
     state.sunY += deltaY * lift;
     state.velocity = Math.min(state.velocity, 0);
     state.sunY = clamp(state.sunY, -sky.clientHeight * 0.15, sky.clientHeight * 0.7);
