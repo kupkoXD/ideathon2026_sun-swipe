@@ -11,22 +11,12 @@ const gameOverTitle = document.getElementById("gameOverTitle");
 const restartBtn = document.getElementById("restart");
 const inviteBtn = document.getElementById("invite");
 const learnMoreBtn = document.getElementById("learnMore");
-const shareSheet = document.getElementById("shareSheet");
-const shareClose = document.getElementById("shareClose");
-const shareButtons = shareSheet.querySelectorAll("[data-share]");
 const labelTime = document.getElementById("labelTime");
 const labelVacation = document.getElementById("labelVacation");
 const labelFinalTime = document.getElementById("labelFinalTime");
 const labelFinalScore = document.getElementById("labelFinalScore");
 const campaignLine1 = document.getElementById("campaignLine1");
 const campaignLine2 = document.getElementById("campaignLine2");
-const shareTitle = document.getElementById("shareTitle");
-const shareWhatsApp = document.getElementById("shareWhatsApp");
-const shareTelegram = document.getElementById("shareTelegram");
-const shareEmail = document.getElementById("shareEmail");
-const shareFacebook = document.getElementById("shareFacebook");
-const shareX = document.getElementById("shareX");
-const shareCopy = document.getElementById("shareCopy");
 
 const state = {
   sunY: 0,
@@ -60,11 +50,10 @@ const strings = {
     labelVacation: "Vacation",
     labelFinalTime: "Time",
     labelFinalScore: "Vacation earned",
-    campaignLine1: "Need vacation for real?",
-    campaignLine2: "See how IG Metall is fighting for you when you finish the game.",
-    shareTitle: "Share with",
-    shareEmail: "Email",
-    shareCopy: "Copy link",
+    campaignLine1: "<strong>Need vacation for real?</strong>",
+    campaignLine2: "See how <strong>IG Metall</strong> is fighting for you when you finish the game.",
+    shareUnavailable: "Share not available",
+    shareCopied: "Invite link copied!",
     shareText: (earned, link) =>
       `I earned ${earned} vacation time in Sunset Swipe. Try beating my score: ${link}`,
     units: { day: "d", hour: "h" },
@@ -80,11 +69,10 @@ const strings = {
     labelVacation: "Urlaub",
     labelFinalTime: "Zeit",
     labelFinalScore: "Urlaub gesammelt",
-    campaignLine1: "Brauchst du echten Urlaub?",
-    campaignLine2: "Sieh, wie IG Metall für dich kämpft, wenn das Spiel endet.",
-    shareTitle: "Teilen mit",
-    shareEmail: "E-Mail",
-    shareCopy: "Link kopieren",
+    campaignLine1: "<strong>Brauchst du echten Urlaub?</strong>",
+    campaignLine2: "Sieh, wie <strong>IG Metall</strong> für dich kämpft, wenn das Spiel endet.",
+    shareUnavailable: "Teilen nicht verfügbar",
+    shareCopied: "Einladungslink kopiert!",
     shareText: (earned, link) =>
       `Ich habe ${earned} Urlaub in Sunset Swipe gesammelt. Schaffst du mehr? ${link}`,
     units: { day: "T", hour: "Std" },
@@ -159,15 +147,6 @@ const getSharePayload = () => {
   return { link, text };
 };
 
-const openShareSheet = () => {
-  shareSheet.classList.add("share-sheet--open");
-  shareSheet.setAttribute("aria-hidden", "false");
-};
-
-const closeShareSheet = () => {
-  shareSheet.classList.remove("share-sheet--open");
-  shareSheet.setAttribute("aria-hidden", "true");
-};
 
 const tick = (time) => {
   const dt = Math.min(32, time - state.lastTime || 16);
@@ -266,7 +245,7 @@ restartBtn.addEventListener("click", () => {
 });
 
 learnMoreBtn.addEventListener("click", () => {
-  window.open("https://www.igmetall.de", "_blank", "noopener,noreferrer");
+  window.location.href = "https://www.igmetall.de";
 });
 
 inviteBtn.addEventListener("click", async () => {
@@ -276,54 +255,21 @@ inviteBtn.addEventListener("click", async () => {
       await navigator.share({ title: "Sunset Swipe", text, url: link });
       return;
     } catch {
-      // continue to custom share sheet
+      // fall through to clipboard
     }
   }
-  openShareSheet();
-});
-
-shareClose.addEventListener("click", closeShareSheet);
-shareSheet.addEventListener("click", (event) => {
-  if (event.target === shareSheet) {
-    closeShareSheet();
+  try {
+    await navigator.clipboard.writeText(text);
+    inviteBtn.textContent = t.shareCopied;
+    window.setTimeout(() => {
+      inviteBtn.textContent = t.invite;
+    }, 1600);
+  } catch {
+    inviteBtn.textContent = t.shareUnavailable;
+    window.setTimeout(() => {
+      inviteBtn.textContent = t.invite;
+    }, 1600);
   }
-});
-
-shareButtons.forEach((button) => {
-  button.addEventListener("click", async () => {
-    const type = button.dataset.share;
-    const { link, text } = getSharePayload();
-    const encodedText = encodeURIComponent(text);
-    const encodedLink = encodeURIComponent(link);
-    let targetUrl = "";
-
-    if (type === "whatsapp") {
-      targetUrl = `https://wa.me/?text=${encodedText}`;
-    } else if (type === "telegram") {
-      targetUrl = `https://t.me/share/url?url=${encodedLink}&text=${encodedText}`;
-    } else if (type === "email") {
-      targetUrl = `mailto:?subject=${encodeURIComponent("Sunset Swipe")}&body=${encodedText}`;
-    } else if (type === "facebook") {
-      targetUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodedLink}`;
-    } else if (type === "x") {
-      targetUrl = `https://twitter.com/intent/tweet?text=${encodedText}`;
-    } else if (type === "copy") {
-      try {
-        await navigator.clipboard.writeText(text);
-        button.textContent = locale === "de" ? "Kopiert!" : "Copied!";
-        window.setTimeout(() => {
-          button.textContent = t.shareCopy;
-        }, 1200);
-      } catch {
-        button.textContent = locale === "de" ? "Kopieren fehlgeschlagen" : "Copy failed";
-      }
-      return;
-    }
-
-    if (targetUrl) {
-      window.open(targetUrl, "_blank", "noopener,noreferrer");
-    }
-  });
 });
 
 const applyLocalization = () => {
@@ -331,19 +277,12 @@ const applyLocalization = () => {
   labelVacation.textContent = t.labelVacation;
   labelFinalTime.textContent = t.labelFinalTime;
   labelFinalScore.textContent = t.labelFinalScore;
-  campaignLine1.textContent = t.campaignLine1;
-  campaignLine2.textContent = t.campaignLine2;
-  shareTitle.textContent = t.shareTitle;
-  shareEmail.textContent = t.shareEmail;
-  shareCopy.textContent = t.shareCopy;
+  campaignLine1.innerHTML = t.campaignLine1;
+  campaignLine2.innerHTML = t.campaignLine2;
   gameOverTitle.textContent = t.gameOverTitle;
   restartBtn.textContent = t.restart;
   inviteBtn.textContent = t.invite;
   learnMoreBtn.textContent = t.learnMore;
-  shareWhatsApp.textContent = "WhatsApp";
-  shareTelegram.textContent = "Telegram";
-  shareFacebook.textContent = "Facebook";
-  shareX.textContent = "X (Twitter)";
   hint.textContent = t.hint;
 };
 
